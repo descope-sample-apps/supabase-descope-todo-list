@@ -15,7 +15,7 @@ This sample app is an open-source project, built with Next.js, the Descope React
 4. [Issue Reporting](#issue-reporting)
 5. [LICENSE](#license)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fsupabase%2Fsupabase%2Ftree%2Fmaster%2Fexamples%2Ftodo-list%2Fnextjs-todo-list&project-name=supabase-nextjs-todo-list&repository-name=supabase-nextjs-todo-list&integration-ids=oac_VqOgBHqhEoFTPzGkPd7L0iH6&external-id=https%3A%2F%2Fgithub.com%2Fsupabase%2Fsupabase%2Ftree%2Fmaster%2Fexamples%2Ftodo-list%2Fnextjs-todo-list)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fdescope-sample-apps%2Fsupabase-descope-todo-list&env=NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,SUPABASE_JWT_SECRET,NEXT_PUBLIC_DESCOPE_PROJECT_ID&envDescription=You'll%20need%20the%20following%20environment%20variables%20in%20order%20to%20run%20this%20application.&envLink=https%3A%2F%2Fgithub.com%2Fdescope-sample-apps%2Fsupabase-descope-todo-list%2Ftree%2Fmain%3Ftab%3Dreadme-ov-file%233-set-environment-variables)
 
 ## How it Works ✨
 
