@@ -1,4 +1,5 @@
-<img width="1400" alt="Screenshot 2023-12-27 at 1 58 24 PM" src="https://github.com/descope-sample-apps/expo-sample-app/assets/32936811/3ca54235-19a3-407f-8b36-dd1425d957e2">
+<img width="1400" alt="Screenshot 2024-01-18 at 9 50 28 AM" src="https://github.com/descope-sample-apps/supabase-descope-todo-list/assets/32936811/3c26be19-2d80-471c-bad3-03ad582d6a38">
+
 
 ---
 
@@ -75,13 +76,17 @@ However, in order to make sure that the users of this note app do not have acces
 
 In order to control access to specific row-entries in your database, by `user_id` you'll need to add make some changes to the database configuration:
 
-- 1. First, you'll need to make sure that the `user_id` column is of type `text` rather than `UUID`. You can check this here:
+- **1.** First, you'll need to make sure that the `user_id` column is of type `text` rather than `UUID`. You can check this here:
+ 
+<img width="600" alt="Monosnap Descope | Descope | Supabase 2024-01-18 11-15-11" src="https://github.com/descope-sample-apps/supabase-descope-todo-list/assets/32936811/95d50327-2e3b-4f7a-a061-6cd898272049">
 
 If you need to change the type, you'll first have to delete the column and then add it again, with the type `text`:
 
+<img width="600" alt="Monosnap Descope | Descope | Supabase 2024-01-18 11-20-27" src="https://github.com/descope-sample-apps/supabase-descope-todo-list/assets/32936811/454e21dc-bb61-408f-86cc-875330711b94">
+
 > **Note:** If you're `user_id` column is UUID, then Supabase will not allow Descope-based User IDs to be set in the column (this is ok, since all Descope User IDs are unique anyway).
 
-- 2. Next, you'll need to run a SQL query, to be able to map `auth.user_id()` to the claims that come from the JWT that will be sent to Supabase, via the SDK, in this sample app:
+- **2.** Next, you'll need to run a SQL query, to be able to map `auth.user_id()` to the claims that come from the JWT that will be sent to Supabase, via the SDK, in this sample app:
 
 ```
 create or replace function auth.user_id() returns text as $$
@@ -91,9 +96,13 @@ $$ language sql stable;
 
 You'll need to put this under the `SQL Editor` and run this:
 
-- 3. Next, you'll need to add the RLS policy for `SELECT`, `INSERT`, and `DELETE`. You can do this under Authentication -> Policies:
+<img width="600" alt="Monosnap SQL | Supabase 2024-01-18 11-26-44" src="https://github.com/descope-sample-apps/supabase-descope-todo-list/assets/32936811/68472f73-714d-4897-9403-40c7ba88f65e">
+
+- **3.** Next, you'll need to add the RLS policy for `SELECT`, `INSERT`, and `DELETE`. You can do this under Authentication -> Policies:
 
 You will add the same policy, albeit with different `Names` and `Allowed Operations`, like this:
+
+<img width="600" alt="Monosnap Auth | Supabase 2024-01-18 11-22-01" src="https://github.com/descope-sample-apps/supabase-descope-todo-list/assets/32936811/8def1f10-155a-4109-b44e-53e5acabaf79">
 
 The value for `USING expression` should be:
 
@@ -102,6 +111,8 @@ The value for `USING expression` should be:
 ```
 
 Once you've set all of the policies, your RLS Policies page should look like this:
+
+<img width="600" alt="Screenshot 2024-01-18 at 11 24 31 AM" src="https://github.com/descope-sample-apps/supabase-descope-todo-list/assets/32936811/8eb03dba-0b1c-452b-996b-7add0f61809f">
 
 ## Running the Application 🚀
 
