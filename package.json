@@ -11,7 +11,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@descope/react-sdk": "^2.0.5",
+    "@descope/nextjs-sdk": "^0.0.9",
     "@next/font": "13.1.6",
     "@supabase/auth-helpers-react": "^0.3.1",
     "@supabase/auth-ui-react": "^0.2.8",
@@ -23,7 +23,7 @@
     "eslint-config-next": "13.1.6",
     "jsonwebtoken": "^9.0.2",
     "jwt-decode": "^4.0.0",
-    "next": "13.1.6",
+    "next": "^14.2.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "4.9.5"

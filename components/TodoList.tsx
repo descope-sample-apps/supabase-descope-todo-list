@@ -1,7 +1,7 @@
 import { Database } from "@/lib/schema";
 import { createSupabaseClient } from "@/lib/initSupabase";
 import { useEffect, useState } from "react";
-import { getSessionToken } from "@descope/react-sdk";
+import { getSessionToken } from "@descope/nextjs-sdk/client";
 import { jwtDecode } from "jwt-decode";
 
 type Todos = Database["public"]["Tables"]["todos"]["Row"];
