@@ -737,8 +737,6 @@ video {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Write your own custom component styles here */
-
 .btn-black {
   border-radius: 0.25rem;
   border-width: 1px;
