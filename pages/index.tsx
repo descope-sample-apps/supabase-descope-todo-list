@@ -1,5 +1,4 @@
 import Head from "next/head";
-// import { useSession, useSupabaseClient } from '@supabase/auth-helpers-react'
 import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
 import { useSession, useDescope } from "@descope/react-sdk";
 import TodoList from "@/components/TodoList";

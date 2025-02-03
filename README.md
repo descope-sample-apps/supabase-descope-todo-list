@@ -98,7 +98,7 @@ You'll need to put this under the `SQL Editor` and run this:
 
 <img width="600" alt="Monosnap SQL | Supabase 2024-01-18 11-26-44" src="https://github.com/descope-sample-apps/supabase-descope-todo-list/assets/32936811/68472f73-714d-4897-9403-40c7ba88f65e">
 
-- **3.** Next, you'll need to add the RLS policy for `SELECT`, `INSERT`, and `DELETE`. You can do this under Authentication -> Policies:
+- **3.** Next, you'll need to add the RLS policy for `SELECT`, `INSERT`, `UPDATE`, and `DELETE`. You can do this under Authentication -> Policies:
 
 You will add the same policy, albeit with different `Names` and `Allowed Operations`, like this:
 
