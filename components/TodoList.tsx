@@ -3,6 +3,7 @@ import { createSupabaseClient } from "@/lib/initSupabase";
 import { useEffect, useState } from "react";
 import { getSessionToken } from "@descope/react-sdk";
 import { jwtDecode } from "jwt-decode";
+import { SupabaseClient } from "@supabase/supabase-js";
 
 type Todos = Database["public"]["Tables"]["todos"]["Row"];
 
@@ -10,74 +11,92 @@ export default function TodoList() {
   const [todos, setTodos] = useState<Todos[]>([]);
   const [newTaskText, setNewTaskText] = useState("");
   const [errorText, setErrorText] = useState("");
-  const [supabase, setSupabase] = useState(null);
+  const [supabase, setSupabase] = useState<SupabaseClient<Database> | null>(
+    null
+  );
 
   const sessionToken = getSessionToken();
-  const decodedToken = jwtDecode(sessionToken);
-  const userId = decodedToken.sub;
+  const decodedToken = sessionToken
+    ? jwtDecode<{ sub?: string }>(sessionToken)
+    : {};
+  const userId: string = decodedToken?.sub ?? "";
 
   useEffect(() => {
     const initializeSupabase = async () => {
-      const response = await fetch("/api/create-jwt", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId }),
-      });
+      try {
+        const response = await fetch("/api/create-jwt", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId }),
+        });
 
-      const data = await response.json();
-      setSupabase(createSupabaseClient(data.token));
+        if (!response.ok) throw new Error("Failed to fetch JWT");
+
+        const data = await response.json();
+        if (data?.token) {
+          const client = createSupabaseClient(data.token);
+          setSupabase(client as SupabaseClient<Database>);
+        } else {
+          throw new Error("Invalid token received");
+        }
+      } catch (error) {
+        console.error("Error initializing Supabase:", error);
+      }
     };
 
-    initializeSupabase();
-  }, []);
+    if (userId) {
+      initializeSupabase();
+    }
+  }, [userId]);
 
   useEffect(() => {
     if (supabase) {
       const fetchTodos = async () => {
-        const { data: todos, error } = await supabase
+        const { data, error } = await supabase
           .from("todos")
           .select("*")
           .order("id", { ascending: true });
 
         if (error) console.log("error", error);
-        else setTodos(todos);
+        else if (data) setTodos(data as Todos[]);
       };
+
       fetchTodos();
     }
   }, [supabase]);
 
   const addTodo = async (taskText: string) => {
     let task = taskText.trim();
-    if (task.length) {
-      const { data: todo, error } = await supabase
+    if (task.length && supabase) {
+      const { data, error } = await supabase
         .from("todos")
-        .insert({ task, user_id: decodedToken.sub })
+        .insert({ task, user_id: userId })
         .select()
         .single();
 
       if (error) {
         setErrorText(error.message);
-      } else {
-        setTodos([...todos, todo]);
+      } else if (data) {
+        setTodos((prevTodos) => [...prevTodos, data as Todos]);
         setNewTaskText("");
       }
     }
   };
 
   const deleteTodo = async (id: number) => {
-    try {
-      await supabase.from("todos").delete().eq("id", id).throwOnError();
-      setTodos(todos.filter((x) => x.id != id));
-    } catch (error) {
-      console.log("error", error);
+    if (supabase) {
+      try {
+        await supabase.from("todos").delete().eq("id", id).throwOnError();
+        setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+      } catch (error) {
+        console.log("error", error);
+      }
     }
   };
 
   return (
     <div className="w-full">
-      <h1 className="mb-12">Todo List.</h1>
+      <h1 className="mb-12">Todo List</h1>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -88,7 +107,7 @@ export default function TodoList() {
         <input
           className="rounded w-full p-2"
           type="text"
-          placeholder="make coffee"
+          placeholder="Add a task..."
           value={newTaskText}
           onChange={(e) => {
             setErrorText("");
@@ -106,6 +125,7 @@ export default function TodoList() {
             <Todo
               key={todo.id}
               todo={todo}
+              supabase={supabase}
               onDelete={() => deleteTodo(todo.id)}
             />
           ))}
@@ -115,46 +135,36 @@ export default function TodoList() {
   );
 }
 
-const Todo = ({ todo, onDelete }: { todo: Todos; onDelete: () => void }) => {
+const Todo = ({
+  todo,
+  onDelete,
+  supabase,
+}: {
+  todo: Todos;
+  onDelete: () => void;
+  supabase: SupabaseClient<Database> | null;
+}) => {
   const [isCompleted, setIsCompleted] = useState(todo.is_complete);
-  const [supabase, setSupabase] = useState(null);
-
-  const sessionToken = getSessionToken();
-  const decodedToken = jwtDecode(sessionToken);
-  const userId = decodedToken.sub;
-
-  useEffect(() => {
-    const initializeSupabase = async () => {
-      const response = await fetch("/api/create-jwt", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userId }),
-      });
-
-      const data = await response.json();
-      setSupabase(createSupabaseClient(data.token));
-    };
-
-    initializeSupabase();
-  }, []);
 
   const toggle = async () => {
     try {
       if (supabase) {
-        const { data } = await supabase
+        const { data, error } = await supabase
           .from("todos")
-          .update({ is_complete: !isCompleted })
+          .update({ is_complete: !isCompleted }) // Toggle completion status
           .eq("id", todo.id)
-          .throwOnError()
           .select()
           .single();
 
-        if (data) setIsCompleted(data.is_complete);
+        if (error) {
+          console.error("Error updating todo:", error);
+        } else if (data) {
+          // Update the local state after a successful database update
+          setIsCompleted(data.is_complete ?? false); // Ensure a fallback value if is_complete is null
+        }
       }
     } catch (error) {
-      console.log("error", error);
+      console.log("Error:", error);
     }
   };
 
@@ -169,9 +179,9 @@ const Todo = ({ todo, onDelete }: { todo: Todos; onDelete: () => void }) => {
         <div>
           <input
             className="cursor-pointer"
-            onChange={(e) => toggle()}
+            onChange={toggle}
             type="checkbox"
-            checked={isCompleted ? true : false}
+            checked={isCompleted || false} // Default to false if isCompleted is null
           />
         </div>
         <button

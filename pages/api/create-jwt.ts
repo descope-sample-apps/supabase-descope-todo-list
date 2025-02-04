@@ -1,10 +1,10 @@
 import jwt from 'jsonwebtoken';
 
-export default async function handler(req, res) {
+export default async function handler(req: any, res: any) {
   if (req.method === 'POST') {
     try {
       const { userId } = req.body;
-      const supabaseSecret = process.env.SUPABASE_JWT_SECRET;
+      const supabaseSecret = String(process.env.SUPABASE_JWT_SECRET);
 
       const newToken = jwt.sign({ sub: userId }, supabaseSecret, { algorithm: 'HS256' });
       res.status(200).json({ token: newToken });
