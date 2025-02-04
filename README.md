@@ -84,7 +84,7 @@ If you need to change the type, you'll first have to delete the column and then 
 
 <img width="600" alt="Monosnap Descope | Descope | Supabase 2024-01-18 11-20-27" src="https://github.com/descope-sample-apps/supabase-descope-todo-list/assets/32936811/454e21dc-bb61-408f-86cc-875330711b94">
 
-> **Note:** If you're `user_id` column is UUID, then Supabase will not allow Descope-based User IDs to be set in the column (this is ok, since all Descope User IDs are unique anyway).
+> **Note:** If your`user_id` column is UUID, then Supabase will not allow Descope-based User IDs to be set in the column (this is ok, since all Descope User IDs are unique anyway).
 
 - **2.** Next, you'll need to run a SQL query, to be able to map `auth.user_id()` to the claims that come from the JWT that will be sent to Supabase, via the SDK, in this sample app:
 
