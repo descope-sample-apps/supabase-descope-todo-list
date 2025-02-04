@@ -1,7 +1,7 @@
 import { Database } from "@/lib/schema";
 import { createSupabaseClient } from "@/lib/initSupabase";
 import { useEffect, useState } from "react";
-import { getSessionToken } from "@descope/react-sdk";
+import { useSession } from '@descope/nextjs-sdk/client';
 import { jwtDecode } from "jwt-decode";
 import { SupabaseClient } from "@supabase/supabase-js";
 
@@ -15,7 +15,7 @@ export default function TodoList() {
     null
   );
 
-  const sessionToken = getSessionToken();
+  const { isAuthenticated, isSessionLoading, sessionToken } = useSession();
   const decodedToken = sessionToken
     ? jwtDecode<{ sub?: string }>(sessionToken)
     : {};

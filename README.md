@@ -3,7 +3,7 @@
 
 ---
 
-This sample app is an open-source project, built with Next.js, the Descope React SDK, and Supabase. This is a simple todo-list application, that shows you how to use Supbase and RLS (Row-level Security) with Descope, natively in your application.
+This sample app is an open-source project, built with Next.js, the Descope Next.js SDK, and Supabase. This is a simple "todo list" application, that shows you how to use Supbase and RLS (Row-level Security) with Descope, natively in your application.
 
 > **Note:** Supabase also supports using external [SAML providers](https://supabase.com/docs/guides/auth/sso/auth-sso-saml), however this is only available to Supabase Pro tiers and up. If you're using the Free tier with Supabase, the approach used in this sample app is the recommended approach for you.
 
@@ -23,11 +23,11 @@ This sample app is an open-source project, built with Next.js, the Descope React
 
 At a high level, this is what the sample app does:
 
-- **1.** Uses the Descope React SDK in the frontend to log the user in and create a Descope session JWT.
-- **2.** Creates a Supabase-approved JWT with `jsonwebtoken` and the Supabase JWT Secret, with the Descope unique User ID as a claim in the JWT
+- **1.** Uses the Descope Next.js SDK in the frontend to log the user in and create a Descope session JWT.
+- **2.** Creates a Supabase-approved JWT with `jose` and the Supabase JWT Secret, with the Descope unique User ID as a claim in the JWT
 - **3.** Supabase will retrieve this, decode the JWT, extract the `user_id` claim, and use it to identify the user.
 
-The session will therefore be managed with Descope and the React SDK in the frontend, and the app will only create a Supabase JWT, if there is a valid active session between the app and Descope.
+The session will therefore be managed with Descope and the Next.js SDK in the frontend, and the app will only create a Supabase JWT, if there is a valid active session between the app and Descope.
 
 ### Postgres Row level security
 
@@ -84,7 +84,7 @@ If you need to change the type, you'll first have to delete the column and then 
 
 <img width="600" alt="Monosnap Descope | Descope | Supabase 2024-01-18 11-20-27" src="https://github.com/descope-sample-apps/supabase-descope-todo-list/assets/32936811/454e21dc-bb61-408f-86cc-875330711b94">
 
-> **Note:** If you're `user_id` column is UUID, then Supabase will not allow Descope-based User IDs to be set in the column (this is ok, since all Descope User IDs are unique anyway).
+> **Note:** If your`user_id` column is UUID, then Supabase will not allow Descope-based User IDs to be set in the column (this is ok, since all Descope User IDs are unique anyway).
 
 - **2.** Next, you'll need to run a SQL query, to be able to map `auth.user_id()` to the claims that come from the JWT that will be sent to Supabase, via the SDK, in this sample app:
 
