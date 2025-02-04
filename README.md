@@ -24,7 +24,7 @@ This sample app is an open-source project, built with Next.js, the Descope React
 At a high level, this is what the sample app does:
 
 - **1.** Uses the Descope React SDK in the frontend to log the user in and create a Descope session JWT.
-- **2.** Creates a Supabase-approved JWT with `jsonwebtoken` and the Supabase JWT Secret, with the Descope unique User ID as a claim in the JWT
+- **2.** Creates a Supabase-approved JWT with `jose` and the Supabase JWT Secret, with the Descope unique User ID as a claim in the JWT
 - **3.** Supabase will retrieve this, decode the JWT, extract the `user_id` claim, and use it to identify the user.
 
 The session will therefore be managed with Descope and the React SDK in the frontend, and the app will only create a Supabase JWT, if there is a valid active session between the app and Descope.

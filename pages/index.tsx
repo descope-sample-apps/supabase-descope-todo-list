@@ -1,23 +1,11 @@
 import Head from "next/head";
-import { Auth, ThemeSupa } from "@supabase/auth-ui-react";
-import { useSession, useDescope } from "@descope/react-sdk";
+import { Descope } from "@descope/nextjs-sdk";
+import { useDescope, useSession, useUser } from '@descope/nextjs-sdk/client';
 import TodoList from "@/components/TodoList";
-import dynamic from "next/dynamic";
 
-const DescopeWC = dynamic(
-  async () => {
-    const { Descope } = await import("@descope/react-sdk");
-    return (props: React.ComponentProps<typeof Descope>) => (
-      <Descope {...props} />
-    );
-  },
-  {
-    ssr: false,
-  }
-);
 
 export default function Home() {
-  const { isAuthenticated } = useSession();
+  const { isAuthenticated, isSessionLoading, sessionToken } = useSession();
   const { logout } = useDescope();
 
   return (
@@ -36,7 +24,7 @@ export default function Home() {
                 <span className="font-sans text-4xl text-center pb-2 mb-1 border-b mx-4 align-center">
                   Login
                 </span>
-                <DescopeWC
+                <Descope
                   flowId={
                     process.env.NEXT_PUBLIC_DESCOPE_FLOW_ID || "sign-up-or-in"
                   }
