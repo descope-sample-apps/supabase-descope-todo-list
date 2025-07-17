@@ -1,13 +1,12 @@
 import { Database } from "@/lib/schema";
 import { createSupabaseClient } from "@/lib/initSupabase";
 import { useEffect, useState } from "react";
-import { useSession } from '@descope/nextjs-sdk/client';
-import { jwtDecode } from "jwt-decode";
+import { useDescope, useSession, useUser } from '@descope/nextjs-sdk/client';
 import { SupabaseClient } from "@supabase/supabase-js";
 
 type Todos = Database["public"]["Tables"]["todos"]["Row"];
 
-export default function TodoList() {
+export default function TodoList({externalToken}: any) {
   const [todos, setTodos] = useState<Todos[]>([]);
   const [newTaskText, setNewTaskText] = useState("");
   const [errorText, setErrorText] = useState("");
@@ -15,26 +14,32 @@ export default function TodoList() {
     null
   );
 
+  const { logout } = useDescope();
   const { isAuthenticated, isSessionLoading, sessionToken } = useSession();
-  const decodedToken = sessionToken
-    ? jwtDecode<{ sub?: string }>(sessionToken)
-    : {};
-  const userId: string = decodedToken?.sub ?? "";
+  const { user } = useUser()
+
+  const handleLogout = async () => {
+    localStorage.removeItem("externalToken");
+    await logout();
+  }
 
   useEffect(() => {
     const initializeSupabase = async () => {
       try {
-        const response = await fetch("/api/create-jwt", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId }),
-        });
-
-        if (!response.ok) throw new Error("Failed to fetch JWT");
-
-        const data = await response.json();
-        if (data?.token) {
-          const client = createSupabaseClient(data.token);
+        if (externalToken) {
+          localStorage.setItem('externalToken', externalToken);
+        }
+        let data;
+        try {
+          data = localStorage.getItem('externalToken');
+          if (!data) throw new Error("No externalToken found");
+        } catch (e) {
+          handleLogout();
+          return;
+        }
+        console.log(data)
+        if (data) {
+          const client = createSupabaseClient(data);
           setSupabase(client as SupabaseClient<Database>);
         } else {
           throw new Error("Invalid token received");
@@ -44,10 +49,8 @@ export default function TodoList() {
       }
     };
 
-    if (userId) {
-      initializeSupabase();
-    }
-  }, [userId]);
+    initializeSupabase()
+  }, [externalToken]);
 
   useEffect(() => {
     if (supabase) {
@@ -70,7 +73,7 @@ export default function TodoList() {
     if (task.length && supabase) {
       const { data, error } = await supabase
         .from("todos")
-        .insert({ task, user_id: userId })
+        .insert({ task, user_id: user.userId })
         .select()
         .single();
 

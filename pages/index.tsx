@@ -2,11 +2,13 @@ import Head from "next/head";
 import { Descope } from "@descope/nextjs-sdk";
 import { useDescope, useSession, useUser } from '@descope/nextjs-sdk/client';
 import TodoList from "@/components/TodoList";
+import { useState } from "react";
 
 
 export default function Home() {
   const { isAuthenticated, isSessionLoading, sessionToken } = useSession();
   const { logout } = useDescope();
+  const [response, setResponse] = useState("");
 
   return (
     <>
@@ -28,6 +30,10 @@ export default function Home() {
                   flowId={
                     process.env.NEXT_PUBLIC_DESCOPE_FLOW_ID || "sign-up-or-in"
                   }
+                  onSuccess={(e: any) => {
+                    setResponse(e.detail.externalToken)
+                    console.log(e.detail.externalToken)
+                  }}
                 />
               </div>
             </div>
@@ -37,10 +43,11 @@ export default function Home() {
             className="w-full h-full flex flex-col justify-center items-center p-4"
             style={{ minWidth: 250, maxWidth: 600, margin: "auto" }}
           >
-            <TodoList />
+            <TodoList externalToken={response} />
             <button
               className="btn-black w-full mt-12"
               onClick={async () => {
+                localStorage.removeItem("externalToken");
                 const { error } = await logout();
                 if (error) console.log("Error:", error);
               }}
