@@ -72,7 +72,13 @@ Once you've done this, your app should be ready to run.
 
 However, in order to make sure that the users of this note app do not have access to any notes that are not assigned to their specific `user_id`, which is where the next step comes in.
 
-### 4. Configure the RLS Policies for the Sample App
+### 4. Enable Supabase External Tokens in Descope
+
+In the [Descope Console](https://app.descope.com/connectors), navigate to the Connectors page and create a Supabase connector. Include the `JWT Secret` from Supabase as the `Signing Secret` in the configuration.
+
+Once the connector is created, in the [Session Management Settings](https://app.descope.com/settings/project/session), select the connector you created under the `External Token` section and save it. This will allow Descope to create a JWT to be used as a bearer token when creating the Supabase client in the sample app.
+
+### 5. Configure the RLS Policies for the Sample App
 
 In order to control access to specific row-entries in your database, by `user_id` you'll need to add make some changes to the database configuration:
 
